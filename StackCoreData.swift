@@ -14,7 +14,7 @@ class CoreDataStack {
     private let modelName :String
     private let type: Bool
     
-    //inicializador del stack, donde le decimos por defecto que queremos almacenamiento en disco 
+    //init
     //true:  NSSQLiteStoreType
     //false: NSInMemoryStoreType
     
@@ -26,7 +26,7 @@ class CoreDataStack {
     }
     //MARK: -Public Field
     lazy var contex: NSManagedObjectContext = {
-        ///Creamos el contexto y lo hacemos publico
+        ///Contex public
         let contex = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         contex.persistentStoreCoordinator = self.storeCordinator
         return contex
@@ -36,11 +36,11 @@ class CoreDataStack {
     
     //MARK: -Private Field
     private lazy var managedObjectModel: NSManagedObjectModel = {
-        ///buscamos el modelo en Blundel de app, con el nombre del modelo real
+        
         guard let modelURL = Bundle.main.url(forResource: self.modelName, withExtension: "momd") else {
             fatalError("Unable to Find Data Model")
         }
-        ///Si lo encontramos creamos el objectModel y lo devolvemos
+        
         guard let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL) else {
             fatalError("Unable to Load Data Model")
         }
@@ -52,15 +52,15 @@ class CoreDataStack {
     
     
     private lazy var storeCordinator: NSPersistentStoreCoordinator = {
-        /// creamos el storeCordinator
+        /// create storeCordinator
         let persistentStoreCoordinator: NSPersistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        ///Configuramos donde vamos a guardar la base de datos normalmente en el directorio document de la app y le damos extension sqlite
+        ///save file sqlite
         let fileManager = FileManager.default
         let storeName = "\(self.modelName).sqlite"
         let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let persistentStoreURL = documentsDirectoryURL.appendingPathComponent(storeName)
         
-        ///configuramos el store, como migracion de models y donde lo queremos guardar en memory o en disco
+        ///configure store
         do {
             let options = [ NSInferMappingModelAutomaticallyOption : true,
                             NSMigratePersistentStoresAutomaticallyOption : true]
